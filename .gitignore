@@ -1,0 +1,11 @@
+weather
+*.cmo
+*.cmi
+._bcdi
+._d
+._ncdi
+*.cmx
+parser.ml
+parser.mli
+lexer.ml
+*.o
