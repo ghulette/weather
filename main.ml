@@ -18,5 +18,6 @@ let rec loop lexbuf =
       loop lexbuf
 
 let () =
-  let lexbuf = Lexing.from_channel stdin in
-  loop lexbuf
+  Service.get_weather "San Francisco"
+  
+(*let lexbuf = Lexing.from_channel stdin in loop lexbuf*)
