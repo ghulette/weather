@@ -1,4 +1,6 @@
 {
+  open Batteries
+  open Printf
   open Lexing
   open Parser
   
@@ -12,6 +14,13 @@
       { pos with pos_bol = lexbuf.lex_curr_pos; 
 		 pos_lnum = pos.pos_lnum + 1
       }
+
+  let output_pos ch lexbuf =
+    let pos = lexbuf.lex_curr_p in 
+    let file_name = pos.pos_fname in
+    let line_num = pos.pos_lnum in
+    let col_num = pos.pos_cnum - pos.pos_bol + 1 in
+    fprintf ch "%s:%d:%d" file_name line_num col_num
 }
 
 let digit = ['0'-'9']
@@ -23,22 +32,22 @@ let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 
 rule read = parse
-  | white    { read lexbuf }
-  | newline  { next_line lexbuf; read lexbuf }
-  | "null"   { NULL }
-  | "true"   { TRUE }
-  | "false"  { FALSE }
-  | int      { INT (int_of_string (lexeme lexbuf)) }
-  | float    { FLOAT (float_of_string (lexeme lexbuf)) }
-  | '"'      { Buffer.clear buf; STRING (read_string lexbuf) }
-  | '{'      { LEFT_BRACE }
-  | '}'      { RIGHT_BRACE }
-  | '['      { LEFT_BRACK }
-  | ']'      { RIGHT_BRACK }
-  | ':'      { COLON }
-  | ','      { COMMA }
-  | eof      { EOF }
-  | _        { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
+  | white { read lexbuf }
+  | newline { next_line lexbuf; read lexbuf }
+  | "null" { NULL }
+  | "true" { TRUE }
+  | "false" { FALSE }
+  | int { INT (int_of_string (lexeme lexbuf)) }
+  | float { FLOAT (float_of_string (lexeme lexbuf)) }
+  | '"' { Buffer.clear buf; STRING (read_string lexbuf) }
+  | '{' { LEFT_BRACE }
+  | '}' { RIGHT_BRACE }
+  | '[' { LEFT_BRACK }
+  | ']' { RIGHT_BRACK }
+  | ':' { COLON }
+  | ',' { COMMA }
+  | eof { EOF }
+  | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 
 and read_string = parse
   | '"' { Buffer.contents buf }

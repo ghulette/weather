@@ -1,4 +1,5 @@
 open Batteries
+open Printf
 
 type t = 
   | Unit
@@ -26,3 +27,5 @@ let rec to_string = function
     List.map (fun (k,v) -> pair ": " (String.quote k) (to_string v)) ps |>
     String.concat ", " |> brace
 
+let rec output ch x =
+  fprintf ch "%s" (to_string x)

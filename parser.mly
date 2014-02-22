@@ -1,15 +1,10 @@
 %token <int> INT
 %token <float> FLOAT
 %token <string> STRING
-%token TRUE
-%token FALSE
-%token NULL
-%token LEFT_BRACE
-%token RIGHT_BRACE
-%token LEFT_BRACK
-%token RIGHT_BRACK
-%token COLON
-%token COMMA
+%token TRUE FALSE NULL
+%token LEFT_BRACE RIGHT_BRACE
+%token LEFT_BRACK RIGHT_BRACK
+%token COLON COMMA
 %token EOF
 
 %start <Json.t option> top
