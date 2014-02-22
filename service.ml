@@ -9,13 +9,11 @@ open Netencoding.Url
 let api_key = "0a5c48c5769671dca8b2072de18e6904"
 
 let http_syntax = Hashtbl.find common_url_syntax "http"
-let host = "api.openweathermap.org"
-let path = ["";"data";"2.5";"weather"]
 let url = make_url
   ~encoded:true
-  ~scheme:"http" 
-  ~host:(encode host)
-  ~path:(List.map encode path)
+  ~scheme:"http"
+  ~host:"api.openweathermap.org"
+  ~path:["";"data";"2.5";"weather"]
   http_syntax
 
 let get_weather region =
