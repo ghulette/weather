@@ -10,9 +10,17 @@ let parse_json lexbuf =
       fprintf stderr "%a: parse error\n" Lexer.output_pos lexbuf; 
       exit (-1)
 
+let (>>=) = Option.bind
+
 let () =
   let resp = Service.get_weather "San Francisco, CA" in
   let lexbuf = Lexing.from_string resp in
-  match parse_json lexbuf with
-    | Some data -> printf "%a\n" Json.output data
-    | None -> printf "No data\n"
+  let doc = parse_json lexbuf in
+  let temp = begin doc
+    >>= Json.field "main"
+    >>= Json.field "temp" 
+    >>= Json.float_value
+    |> Option.get
+  end in
+  printf "%f\n" temp
+
