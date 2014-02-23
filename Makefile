@@ -1,4 +1,5 @@
-SOURCES = json.ml parser.mly lexer.mll service.ml main.ml
+SOURCES = json.ml parser.mly lexer.mll http.mli http.ml service.ml	\
+main.ml
 RESULT  = weather
 
 PACKS = batteries netstring netclient

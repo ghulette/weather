@@ -10,14 +10,9 @@ let parse_json lexbuf =
       fprintf stderr "%a: parse error\n" Lexer.output_pos lexbuf; 
       exit (-1)
 
-let rec loop lexbuf =
-  match parse_json lexbuf with
-    | None -> ()
-    | Some x -> 
-      printf "%a\n" Json.output x; 
-      loop lexbuf
-
 let () =
-  Service.get_weather "San Francisco"
-  
-(*let lexbuf = Lexing.from_channel stdin in loop lexbuf*)
+  let resp = Service.get_weather "San Francisco, CA" in
+  let lexbuf = Lexing.from_string resp in
+  match parse_json lexbuf with
+    | Some data -> printf "%a\n" Json.output data
+    | None -> printf "No data\n"
