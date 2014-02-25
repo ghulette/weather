@@ -11,3 +11,4 @@ let get_weather region =
   let query = [("APPKEY",api_key);("q",region)] in
   let url = Http.Url.make host path query |> Http.Url.to_string in
   Http.get url
+

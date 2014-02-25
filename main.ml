@@ -12,15 +12,13 @@ let parse_json lexbuf =
 
 let (>>=) = Option.bind
 
+let temp_path doc = 
+  doc >>= Json.field "main" >>= Json.field "temp" >>= Json.float_value |> Option.get
+
 let () =
   let resp = Service.get_weather "San Francisco, CA" in
   let lexbuf = Lexing.from_string resp in
   let doc = parse_json lexbuf in
-  let temp = begin doc
-    >>= Json.field "main"
-    >>= Json.field "temp" 
-    >>= Json.float_value
-    |> Option.get
-  end in
+  let temp = temp_path doc in
   printf "%f\n" temp
 
