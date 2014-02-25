@@ -20,3 +20,5 @@ let temperature w = (Some w) >>=
   Json.field "main" >>= 
   Json.field "temp" >>=
   Json.float_value |> Option.get
+
+let dump = Json.to_string
