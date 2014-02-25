@@ -2,7 +2,7 @@
   open Batteries
   open Printf
   open Lexing
-  open Parser
+  open Json_parser
   
   exception SyntaxError of string
 

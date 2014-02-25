@@ -1,23 +1,24 @@
 open Batteries
 open Printf
+open Json_base
 
-type t = 
-  | Unit
-  | Bool of bool
-  | Int of int
-  | Float of float
-  | String of string
-  | List of t list
-  | Assoc of (string * t) list
+type t = Json_base.t
+
+let parse lexbuf =
+  try Json_parser.top Json_lexer.read lexbuf with 
+    | Json_lexer.SyntaxError msg ->
+      fprintf stderr "%a: %s\n" Json_lexer.output_pos lexbuf msg;
+      None
+    | Json_parser.Error ->
+      fprintf stderr "%a: parse error\n" Json_lexer.output_pos lexbuf; 
+      None
+
+let from_string s = Lexing.from_string s |> parse
 
 let bracket s = "[" ^ s ^ "]"
 let brace s = "{" ^ s ^ "}"
 let paren s = "(" ^ s ^ ")"
 let pair sep s1 s2 = s1 ^ sep ^ s2
-let nth l n = try Some (List.nth l n) with Not_found -> None
-let assoc k l = try Some (List.assoc k l) with Not_found -> None
-let (>>=) = Option.bind
-let from_some = Option.get
 
 let rec to_string = function
   | Unit -> "null"
@@ -46,11 +47,16 @@ let float_value = function
   | Float r -> Some r
   | _ -> None
 
+let nth l n = 
+  try Some (List.nth l n) with Not_found -> None
+
 let nth n = function
   | List vs -> nth vs n
   | _ -> None
 
+let assoc k l = 
+  try Some (List.assoc k l) with Not_found -> None
+
 let field k = function
   | Assoc ps -> assoc k ps
   | _ -> None
-

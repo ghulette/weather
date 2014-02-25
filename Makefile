@@ -1,7 +1,7 @@
 RESULT = weather
 
-SOURCES = json.mli json.ml parser.mly lexer.mll http.mli http.ml	\
-service.ml main.ml
+SOURCES = json_base.ml json_parser.mly json_lexer.mll json.mli json.ml \
+http.mli http.ml weather.ml main.ml
 
 PACKS = batteries netstring netclient
 OCAMLYACC = menhir

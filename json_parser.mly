@@ -7,20 +7,20 @@
 %token COLON COMMA
 %token EOF
 
-%start <Json.t option> top
+%start <Json_base.t option> top
 %%
 
 top : EOF { None } | value { Some $1 };
 
 value :
-  | NULL { Json.Unit }
-  | TRUE { Json.Bool true }
-  | FALSE { Json.Bool false }
-  | n = INT { Json.Int n }
-  | r = FLOAT { Json.Float r }
-  | s = STRING { Json.String s }
-  | LEFT_BRACK; ls = list_fields; RIGHT_BRACK { Json.List ls }
-  | LEFT_BRACE; ls = assoc_fields; RIGHT_BRACE { Json.Assoc ls }
+  | NULL { Json_base.Unit }
+  | TRUE { Json_base.Bool true }
+  | FALSE { Json_base.Bool false }
+  | n = INT { Json_base.Int n }
+  | r = FLOAT { Json_base.Float r }
+  | s = STRING { Json_base.String s }
+  | LEFT_BRACK; ls = list_fields; RIGHT_BRACK { Json_base.List ls }
+  | LEFT_BRACE; ls = assoc_fields; RIGHT_BRACE { Json_base.Assoc ls }
   ;
 
 list_fields : ls = separated_list (COMMA, value) { ls };

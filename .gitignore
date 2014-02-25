@@ -1,11 +1,11 @@
 weather
-*.cmo
-*.cmi
+json_parser.ml
+json_parser.mli
+json_lexer.ml
 ._bcdi
 ._d
 ._ncdi
+*.cmo
+*.cmi
 *.cmx
-parser.ml
-parser.mli
-lexer.ml
 *.o
