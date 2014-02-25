@@ -14,6 +14,7 @@ let parse lexbuf =
       None
 
 let from_string s = Lexing.from_string s |> parse
+let from_channel c = Lexing.from_channel c |> parse
 
 let bracket s = "[" ^ s ^ "]"
 let brace s = "{" ^ s ^ "}"
@@ -35,28 +36,19 @@ let rec to_string = function
 let rec output ch x =
   fprintf ch "%s" (to_string x)
 
-let bool_value = function
-  | Bool b -> Some b
-  | _ -> None
+let list_elt l n = try Some (List.nth l n) with Not_found -> None
+let assoc_elt l k = try Some (List.assoc k l) with Not_found -> None
 
-let int_value = function
-  | Int n -> Some n
-  | _ -> None
+let bool_value = function Bool b -> Some b | _ -> None
+let int_value = function Int n -> Some n | _ -> None
+let float_value = function Float r -> Some r | _ -> None
+let string_value = function String s -> Some s | _ -> None
+let nth n = function List vs -> list_elt vs n | _ -> None
+let field k = function Assoc ps -> assoc_elt ps k | _ -> None
 
-let float_value = function
-  | Float r -> Some r
-  | _ -> None
+let of_unit () = Unit
+let of_bool b = Bool b
+let of_int n = Int n
+let of_float r = Float r
+let of_string s = String s
 
-let nth l n = 
-  try Some (List.nth l n) with Not_found -> None
-
-let nth n = function
-  | List vs -> nth vs n
-  | _ -> None
-
-let assoc k l = 
-  try Some (List.assoc k l) with Not_found -> None
-
-let field k = function
-  | Assoc ps -> assoc k ps
-  | _ -> None
