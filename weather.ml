@@ -16,7 +16,7 @@ let for_region region =
   let resp = Http.get url in
   Json.from_string resp |> Option.get
 
-let temperature w = (Some w) >>= 
+let temperature w = (Some w) >>=
   Json.field "main" >>= 
   Json.field "temp" >>=
   Json.float_value |> Option.get

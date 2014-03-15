@@ -2,10 +2,17 @@ open Batteries
 open Printf
 open BatOptParse
 
-let opts = OptParser.make
-  ~version:"0.1"
-  ~usage:"%prog [location...]"
-  () |> OptParser.parse_argv
+let file_opt = Opt.value_option 
+  "<filename>" None (fun f -> f) (fun _ v -> v)
+
+let opts =
+  let p = OptParser.make
+    ~version:"0.1" ~usage:"%prog [location...]" ()
+  in 
+  OptParser.add p ~help:"Read from file" 
+    ~short_name:'f' ~long_name:"file" 
+    file_opt;
+  OptParser.parse_argv p
 
 let home_file path =
   if not (Filename.is_implicit path) then 
@@ -21,9 +28,10 @@ let etc_file path =
     let etc_dir = "/etc" in
     Filename.concat etc_dir path
 
-let pick_input ?use_stdin:(use_stdin=false) () =
-  if use_stdin then
-    stdin
+let pick_input () =
+  if Opt.is_set file_opt then
+    try open_in (Opt.get file_opt) with 
+      | Sys_error msg -> prerr_endline msg; exit (-1)
   else if Sys.file_exists (home_file ".weather") then
     open_in (home_file ".weather")
   else if Sys.file_exists (etc_file "weather") then
@@ -31,17 +39,18 @@ let pick_input ?use_stdin:(use_stdin=false) () =
   else
     stdin
 
-let rec loop ch =
-  try
-    let line = input_line ch in
+let rec read_line_loop ch proc =
+   try 
+     let line = input_line ch in 
+     proc line; 
+     read_line_loop ch proc
+  with End_of_file -> ()
+
+let () = 
+  let ch = pick_input () in
+  read_line_loop ch begin fun line ->
     let w = Weather.for_region line in
     let temp = Weather.temperature w |> Float.round_to_int in
     let desc = Weather.description w in
     printf "%d degrees - %s\n" temp desc;
-    loop ch
-  with
-  | End_of_file -> ()
-
-let () = 
-  let ch = pick_input () in
-  loop ch
+  end
