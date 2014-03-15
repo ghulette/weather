@@ -41,8 +41,8 @@ let pick_input () =
 
 let rec read_line_loop ch proc =
    try 
-     let line = input_line ch in 
-     proc line; 
+     let line = input_line ch |> String.trim in
+     if not (String.is_empty line) then proc line; 
      read_line_loop ch proc
   with End_of_file -> ()
 
@@ -52,5 +52,5 @@ let () =
     let w = Weather.for_region line in
     let temp = Weather.temperature w |> Float.round_to_int in
     let desc = Weather.description w in
-    printf "%d degrees - %s\n" temp desc;
+    printf "%d degrees - %s%!\n" temp desc;
   end

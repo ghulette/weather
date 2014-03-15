@@ -14,6 +14,7 @@ let for_region region =
   let query = [("APPKEY",api_key);("q",region);("units","imperial")] in
   let url = Http.Url.make host path query |> Http.Url.to_string in
   let resp = Http.get url in
+  (* printf "%s\n" resp; *)
   Json.from_string resp |> Option.get
 
 let temperature w = (Some w) >>=
