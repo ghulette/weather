@@ -21,7 +21,7 @@ let in_home path =
     Filename.concat home_dir path
 
 let in_etc path =
-  if not (Filename.is_implicit path) then 
+  if not (Filename.is_implicit path) then
     raise (Invalid_argument path)
   else
     let etc_dir = "/etc" in
