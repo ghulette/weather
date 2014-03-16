@@ -8,9 +8,11 @@ let opts =
   let p = OptParser.make
     ~version:"0.1" ~usage:"%prog [location...]" () in 
   OptParser.add p
-    ~help:"Read from file" ~short_name:'f' ~long_name:"file" opt_file;
+    ~help:"Read from file" ~short_name:'f' ~long_name:"file" 
+    opt_file;
   OptParser.add p 
-    ~help:"Read from stdin" ~short_name:'s' ~long_name:"stdin" opt_stdin;
+    ~help:"Force read from stdin" ~short_name:'s' ~long_name:"stdin" 
+    opt_stdin;
   OptParser.parse_argv p
 
 let in_home path =
@@ -30,12 +32,18 @@ let in_etc path =
 let pick_input () =
   let home_file = in_home ".weather" in
   let etc_file = in_etc "weather" in
-  if Opt.is_set opt_file then
-    try open_in (Opt.get opt_file) with 
+  if Opt.get opt_stdin then stdin
+  else if Opt.is_set opt_file then
+    try open_in (Opt.get opt_file) with
       | Sys_error msg -> prerr_endline msg; exit (-1)
   else if Sys.file_exists home_file then open_in home_file
   else if Sys.file_exists etc_file then open_in etc_file
   else stdin
+
+let words s = String.nsplit s " " |> List.filter (neg String.is_empty)
+let unwords = String.join " "
+
+let clean_desc = words %> List.map String.uncapitalize %> unwords
 
 let rec read_line_loop ch proc =
   try 
@@ -50,6 +58,6 @@ let () =
   read_line_loop ch begin fun line ->
     let w = Weather.for_region line in
     let temp = Weather.temperature w |> Float.round_to_int in
-    let desc = Weather.description w in
+    let desc = Weather.description w |> clean_desc in
     printf "%d degrees - %s\n%!" temp desc;
   end
