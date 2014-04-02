@@ -20,4 +20,4 @@ module Url = struct
       http_syntax
 end
 
-let get = http_get
+let get = Url.to_string %> http_get

@@ -4,4 +4,4 @@ module Url : sig
   val to_string : t -> string
 end
 
-val get : string -> string
+val get : Url.t -> string
